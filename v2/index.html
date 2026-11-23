@@ -164,22 +164,19 @@ const ENTRY_SHOTS={pressure:'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAlgAA
 const trainingDefs={
   relax:{name:'日常放松',method:'延长呼气',rhythm:'4–6',minutes:5,color:'#22c5c7',icon:'🪷',desc:'缓解紧张，放松身心'},
   focus:{name:'集中注意',method:'箱式呼吸',rhythm:'4–4–4–4',minutes:5,color:'#8172ff',icon:'▣',desc:'稳定心绪，进入状态'},
-  sleep:{name:'睡前舒缓',method:'4–7–8 呼吸',rhythm:'4–7–8',minutes:3,color:'#f5a623',icon:'☾',desc:'放缓节奏，准备入睡'},
-  adjust:{name:'调整呼吸',method:'腹式呼吸',rhythm:'5–5',minutes:5,color:'#46c96c',icon:'◒',desc:'放松肩颈，呼吸更顺'}
+  sleep:{name:'睡前舒缓',method:'4–7–8 呼吸',rhythm:'4–7–8',minutes:3,color:'#f5a623',icon:'☾',desc:'放缓节奏，准备入睡'}
 };
 const trainingInfo={
   relax:{steps:'吸气 4 秒 · 呼气 6 秒',copy:'鼻子轻松吸气，再慢慢呼出，不用屏息。',scenes:['压力偏高时']},
   focus:{steps:'吸气 4 秒 · 屏息 4 秒 · 呼气 4 秒 · 屏息 4 秒',copy:'在舒适范围内练习，屏息困难就放轻一些。',scenes:['工作或学习前']},
-  sleep:{steps:'吸气 4 秒 · 屏息 7 秒 · 呼气 8 秒',copy:'鼻子吸气，用嘴呼气，坐着或躺下都可以。',scenes:[]},
-  adjust:{steps:'吸气 5 秒 · 呼气 5 秒',copy:'一只手放在腹部，吸气时鼓起，呼气时回落。',scenes:['肩颈紧绷时']}
+  sleep:{steps:'吸气 4 秒 · 屏息 7 秒 · 呼气 8 秒',copy:'鼻子吸气，用嘴呼气，坐着或躺下都可以。',scenes:[]}
 };
 const guidePages={
   relax:[['慢下来','感受此刻的呼吸'],['自然吸气','呼气慢慢拉长']],
   focus:[['慢下来','留意自己的呼吸'],['吸气，停一下','呼气，再停一下']],
-  sleep:[['慢下来','感受此刻的呼吸'],['鼻子吸气，稍作停留','再用嘴缓缓呼气'],['不用勉强自己','不舒服随时停下']],
-  adjust:[['慢下来','留意自己的呼吸'],['一只手轻放腹部','感受呼吸的起伏']]
+  sleep:[['慢下来','感受此刻的呼吸'],['鼻子吸气，稍作停留','再用嘴缓缓呼气'],['不用勉强自己','不舒服随时停下']]
 };
-const cycleSeconds={relax:10,focus:16,sleep:19,adjust:10};
+const cycleSeconds={relax:10,focus:16,sleep:19};
 const entryStart={pressure:'pressure',chart:'chart',health:'health',widget:'widget'};
 const labels={pressure:'压力提醒',chart:'压力图表',health:'健康快测',widget:'小工具',invite:'场景引导',list:'训练列表',detail:'训练详情',intro:'训练介绍',duration:'时长设置',guide:'训练前引导',training:'正式训练',pause:'暂停',complete:'训练结果',result:'训练结果',earlyEnd:'提前结束结果',feeling:'记录感受',voice:'语音输入'};
 const feelings=[{face:'😄',name:'很好'},{face:'🙂',name:'不错'},{face:'😐',name:'适中'},{face:'🙁',name:'不太好'},{face:'😵',name:'很疲惫'}];
@@ -203,7 +200,7 @@ function detailPage(){const d=def(),info=trainingInfo[state.training],fromWidget
 function introPage(){const d=def(),info=trainingInfo[state.training];return `<div class="page screen-scroll intro-page ${state.backward?'slide-back':''}" style="--training-color:${d.color}"><div class="intro-eyebrow">${d.name} · 训练说明</div><h1 class="intro-heading">${d.method}</h1><div class="rhythm-panel"><div class="intro-label">呼吸节奏</div><div class="rhythm-value">${info.steps}</div></div><div class="intro-copy">${info.copy}</div><div class="intro-label">推荐场景</div><div class="intro-scenes">${info.scenes.map(x=>`<span class="scene-chip">${x}</span>`).join('')}</div><button class="cta" data-action="start-guide">开始训练</button></div>`}
 function durationPage(){const m=state.minutes,upperFar=m>2?m-2:'&nbsp;',upperNear=m>1?m-1:'&nbsp;',lowerNear=m<15?m+1:'&nbsp;',lowerFar=m<14?m+2:'&nbsp;';return commonPage(`<div class="status">${def().name}</div><h1 class="screen-title">自定义时间</h1><div class="wheel"><div class="wheel-nums">${upperFar}<br>${upperNear}<strong>${m} min</strong>${lowerNear}<br>${lowerFar}</div><div class="wheel-line"></div><div class="why"><div>推荐<br><b class="cyan">${def().minutes} min</b></div></div></div><button class="cta" data-action="duration-confirm">确定</button>`)}
 function guidePage(){const lines=guidePages[state.training][state.guideIndex];return commonPage(`<div class="status guide-timer">准备 · 0:${String(state.guideRemaining).padStart(2,'0')}</div><div class="guide-copy">${lines[0]}<br>${lines[1]}</div>`)}
-function phaseInfo(index=state.phaseIndex){const patterns={relax:[['吸气',4,'inhale'],['呼气',6,'exhale']],focus:[['吸气',4,'inhale'],['屏息',4,'hold-large'],['呼气',4,'exhale'],['屏息',4,'hold-small']],sleep:[['吸气',4,'inhale'],['屏息',7,'hold-large'],['呼气',8,'exhale']],adjust:[['吸气',5,'inhale'],['呼气',5,'exhale']]};return patterns[state.training][index%patterns[state.training].length]}
+function phaseInfo(index=state.phaseIndex){const patterns={relax:[['吸气',4,'inhale'],['呼气',6,'exhale']],focus:[['吸气',4,'inhale'],['屏息',4,'hold-large'],['呼气',4,'exhale'],['屏息',4,'hold-small']],sleep:[['吸气',4,'inhale'],['屏息',7,'hold-large'],['呼气',8,'exhale']]};return patterns[state.training][index%patterns[state.training].length]}
 function trainingPage(){const [name,seconds,cls]=phaseInfo();return commonPage(`<div class="status timer">${fmt(state.timeLeft)}</div><div class="breath-orb ${cls}" style="--phase-seconds:${seconds}s"></div><div class="phase-name">${name}</div>`)}
 function pausePage(){return commonPage(`<div class="status">${def().name}</div><h1 class="screen-title" style="margin-top:22px">已暂停</h1><div style="font-size:27px;margin:16px 0 24px">${fmt(state.minutes*60-state.timeLeft)}</div><button class="pause-choice ${state.pauseIndex===0?'selected':''}" data-pause="0">继续训练</button><button class="pause-choice ${state.pauseIndex===1?'selected':''}" data-pause="1">提前结束</button>`)}
 function completePage(){const saved=`<button class="cta" data-action="restart-entry">完成</button>`;return commonPage(`<div class="result-page"><div class="result-hero"><div class="status">本次训练</div><div class="result-check">✓</div><h1 class="screen-title">训练完成</h1><div class="result-duration">${def().name} · ${state.minutes} min</div><div class="result-cue">⌄</div></div><div class="result-card"><div class="result-row"><span>压力</span><b class="result-value">62 <em>→</em> 41</b></div><div class="result-row"><span>心率</span><b class="result-value">76 <em>→</em> 69 <small>bpm</small></b></div></div>${saved}<div class="note">旋转旋钮或上滑查看结果</div></div>`,true)}
@@ -214,7 +211,7 @@ function voicePage(){const body=state.voiceListening?'正在聆听…':state.voi
 const templates={pressure:entryPressure,chart:entryChart,health:entryHealth,widget:entryWidget,invite:invitePage,list:listPage,detail:detailPage,intro:introPage,duration:durationPage,guide:guidePage,training:trainingPage,pause:pausePage,complete:completePage,result:resultPage,earlyEnd:earlyEndPage,feeling:feelingPage,voice:voicePage};
 function render(){const screen=$('#screen');screen.innerHTML=templates[state.page]();const scroller=screen.querySelector('.screen-scroll');scroller?.scrollTo(0,0);if(state.page==='detail'&&state.detailZone==='intro')requestAnimationFrame(()=>{const sc=$('#screen .screen-scroll'),it=$('#detailIntro');if(sc&&it)sc.scrollTo({top:it.offsetTop-8})});if(state.page==='list'&&state.listIndex>1)requestAnimationFrame(()=>document.querySelectorAll('.training-item')[state.listIndex]?.scrollIntoView({block:'center'}));renderHistory();renderHint();}
 function renderHistory(){const items=[labels[state.entry],...state.history.filter((x,i,a)=>a.indexOf(x)===i&&x!==state.entry).map(x=>labels[x]),labels[state.page]].filter(Boolean);$('#history').textContent='路径：'+[...new Set(items)].join(' → ')}
-function renderHint(){const hints={pressure:'向下旋转、滑动或点击表盘，进入场景引导页。',chart:'向下旋转、滑动或确认，先了解为什么推荐呼吸训练。',health:'仅在压力偏高等符合条件时提供场景引导。',invite:'解释推荐原因，并由用户主动确认进入呼吸训练。',widget:'主动入口不增加引导，直接进入四项训练列表。',list:'旋转旋钮切换训练，点击确认进入详情；也可直接触屏点击。',detail:state.detailZone==='intro'?'训练说明在详情页下方；继续向下旋转滚动内容，向上转回到按钮区，按确认键直接回到“开始训练”。':'默认焦点在“开始训练”，确认即可开始；向上选择时长，向下经过按钮后滚动到训练说明。',intro:'精简说明训练方法和推荐场景，返回键回到详情。',duration:'旋转旋钮调整分钟，点击确认键保存。',guide:'准备文案自动播放（睡前舒缓 3 页共 10 秒，其余 2 页共 6 秒），结束后直接进入正式呼吸节奏。',training:'确认键暂停；圆圈按吸气、屏息、呼气阶段连续变化。',pause:'旋转选择“继续/提前结束”，确认键执行。',complete:'结果与完成状态在同一长页面，旋转或上滑直接查看；确认键完成并返回入口。',result:'结果与完成状态在同一长页面。',earlyEnd:'提前结束不显示“训练完成”，只呈现实际时长、压力和心率。',feeling:'旋转选择感受，点击确认键记录。',voice:'点击麦克风模拟语音输入，识别后确认保存。'};$('#pageHint').textContent=`${labels[state.page]||''}：${hints[state.page]||''}`}
+function renderHint(){const hints={pressure:'向下旋转、滑动或点击表盘，进入场景引导页。',chart:'向下旋转、滑动或确认，先了解为什么推荐呼吸训练。',health:'仅在压力偏高等符合条件时提供场景引导。',invite:'解释推荐原因，并由用户主动确认进入呼吸训练。',widget:'主动入口不增加引导，直接进入三项训练列表。',list:'旋转旋钮切换训练，点击确认进入详情；也可直接触屏点击。',detail:state.detailZone==='intro'?'训练说明在详情页下方；继续向下旋转滚动内容，向上转回到按钮区，按确认键直接回到“开始训练”。':'默认焦点在“开始训练”，确认即可开始；向上选择时长，向下经过按钮后滚动到训练说明。',intro:'精简说明训练方法和推荐场景，返回键回到详情。',duration:'旋转旋钮调整分钟，点击确认键保存。',guide:'准备文案自动播放（睡前舒缓 3 页共 10 秒，其余 2 页共 6 秒），结束后直接进入正式呼吸节奏。',training:'确认键暂停；圆圈按吸气、屏息、呼气阶段连续变化。',pause:'旋转选择“继续/提前结束”，确认键执行。',complete:'结果与完成状态在同一长页面，旋转或上滑直接查看；确认键完成并返回入口。',result:'结果与完成状态在同一长页面。',earlyEnd:'提前结束不显示“训练完成”，只呈现实际时长、压力和心率。',feeling:'旋转选择感受，点击确认键记录。',voice:'点击麦克风模拟语音输入，识别后确认保存。'};$('#pageHint').textContent=`${labels[state.page]||''}：${hints[state.page]||''}`}
 function chooseTraining(k){state.training=k;state.minutes=trainingDefs[k].minutes;state.listIndex=Object.keys(trainingDefs).indexOf(k);state.detailAction=1;go('detail')}
 function detailMax(){return 1}
 function enterDetailIntro(){state.detailZone='intro';render();renderHint()}
